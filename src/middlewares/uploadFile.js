@@ -24,7 +24,7 @@ exports.uploadFile = (imageFile) => {
   };
 
   const sizeInMB = 10;
-  const maxSize = sizeInMB * 1000 * 1000;
+  const maxSize = sizeInMB * 1024 * 1024;
 
   const upload = multer({
     storage,

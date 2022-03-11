@@ -4,18 +4,18 @@ const joi = require("joi");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-exports.register = async (request, response) => {
+exports.register = async (req, res) => {
   // Joi scheme
   const scheme = joi.object({
-    name: joi.string().min(3).required(),
-    email: joi.string().required(),
-    password: joi.string().min(3).required(),
+    fullname: joi.string().min(3).required(),
+    email: joi.string().email().min(6).required(),
+    password: joi.string().min(4).required(),
     phone: joi.number().required(),
   });
 
-  const { error } = scheme.validate(request.body);
+  const { error } = scheme.validate(req.body);
   if (error) {
-    return response.status(400).send({
+    return res.status(400).send({
       error: {
         message: error.details[0].message,
       },
@@ -23,66 +23,68 @@ exports.register = async (request, response) => {
   }
 
   try {
-    const existUser = await tb_user.findOne({
+    const userExist = await tb_user.findOne({
       where: {
-        email: request.body.email,
+        email: req.body.email,
       },
       attributes: {
         exclude: ["createdAt", "updatedAt"],
       },
     });
-    if (existUser) {
-      return response.status(500).send({
-        status: "failed",
-        message: "user exists",
+    if (userExist) {
+      return res.status(400).send({
+        status: "Failed",
+        message: "Email already registered.",
       });
     }
 
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(request.body.password, salt);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
     const newUser = await tb_user.create({
-      name: request.body.name,
-      email: request.body.email,
+      fullname: req.body.fullname,
+      email: req.body.email,
       password: hashedPassword,
-      phone: request.body.phone,
+      phone: req.body.phone,
+      image: "default-user.png",
     });
 
     const token = jwt.sign(
       {
         id: tb_user.id,
-        name: newUser.name,
+        fullname: newUser.fullname,
         email: newUser.email,
         password: newUser.password,
+        image: newUser.image,
       },
       process.env.JWT_KEY
     );
 
-    response.send({
-      status: "success",
-      message: "register success",
+    res.send({
+      status: "Success",
+      message: "Register Successful",
       data: {
         token,
       },
     });
   } catch (error) {
     console.log(error);
-    response.send({
-      status: "failed",
-      message: "server error",
+    res.status(500).send({
+      status: "Failed",
+      message: "Server Error",
     });
   }
 };
 
-exports.login = async (request, response) => {
+exports.login = async (req, res) => {
   const scheme = joi.object({
-    email: joi.string().required(),
+    email: joi.string().email().min(6).required(),
     password: joi.string().min(4).required(),
   });
 
-  const { error } = scheme.validate(request.body);
+  const { error } = scheme.validate(req.body);
   if (error) {
-    return response.status(400).send({
+    return res.status(400).send({
       error: {
         message: error.details[0].message,
       },
@@ -90,52 +92,49 @@ exports.login = async (request, response) => {
   }
 
   try {
-    const existUser = await tb_user.findOne({
+    const userExist = await tb_user.findOne({
       where: {
-        email: request.body.email,
+        email: req.body.email,
       },
       attributes: {
         exclude: ["createdAt", "updatedAt"],
       },
     });
 
-    if (!existUser) {
-      return response.status(400).send({
-        status: "failed",
-        message: "register first",
+    if (!userExist) {
+      return res.status(404).send({
+        status: "Failed",
+        message: "User not Found",
       });
     }
 
-    const isValid = await bcrypt.compare(
-      request.body.password,
-      existUser.password
-    );
+    const isValid = await bcrypt.compare(req.body.password, userExist.password);
     if (!isValid) {
-      return response.status(400).send({
-        status: "failed",
-        message: "password salah",
+      return res.status(403).send({
+        status: "Forbidden",
+        message: "Password Mismatch",
       });
     }
 
-    const token = jwt.sign({ id: existUser.id }, process.env.JWT_KEY);
+    const token = jwt.sign({ id: userExist.id }, process.env.JWT_KEY);
     const user = {
-      id: existUser.id,
-      name: existUser.name,
-      email: existUser.email,
-      image: existUser.image,
+      id: userExist.id,
+      fullname: userExist.fullname,
+      email: userExist.email,
+      image: userExist.image,
       token,
     };
 
-    response.send({
-      status: "succes",
-      message: "success",
+    res.send({
+      status: "Success",
+      message: "Login Successful",
       data: { user },
     });
   } catch (error) {
     console.log(error);
-    response.send({
-      status: "failed",
-      message: "server error",
+    res.status(500).send({
+      status: "Failed",
+      message: "Server Error",
     });
   }
 };
@@ -156,6 +155,7 @@ exports.checkAuth = async (req, res) => {
     if (!dataUser) {
       return res.status(404).send({
         status: "Failed",
+        message: "User not Found",
       });
     }
 
@@ -164,14 +164,14 @@ exports.checkAuth = async (req, res) => {
       data: {
         user: {
           id: dataUser.id,
-          name: dataUser.fullname,
+          fullname: dataUser.fullname,
           email: dataUser.email,
         },
       },
     });
   } catch (error) {
     console.log(error);
-    res.status({
+    res.status(500).send({
       status: "Failed",
       message: "Server Error",
     });

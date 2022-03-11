@@ -26,8 +26,8 @@ module.exports = (sequelize, DataTypes) => {
   tb_post.init(
     {
       title: DataTypes.STRING,
-      description: DataTypes.STRING,
-      thumbnail: DataTypes.STRING,
+      body: DataTypes.TEXT,
+      image: DataTypes.STRING,
       idUser: DataTypes.INTEGER,
     },
     {

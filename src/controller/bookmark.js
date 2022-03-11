@@ -1,63 +1,112 @@
 const { tb_bookmark, tb_post, tb_user } = require("../../models");
 
-exports.addBookmark = async (request, response) => {
+exports.toggleBookmark = async (req, res) => {
   try {
-    let addBookmark = await tb_bookmark.create({
-      idUser: request.tb_user.id,
-      idPost: request.body.idPost,
+    const validation = {
+      idUser: req.tb_user.id,
+      idPost: req.body.idPost,
+    };
+
+    let bookmarkExist = await tb_bookmark.findOne({
+      where: validation,
     });
 
-    response.send({
-      status: "success",
-      message: {
+    if (!bookmarkExist) {
+      let addBookmark = await tb_bookmark.create({
+        idUser: req.tb_user.id,
+        idPost: req.body.idPost,
+      });
+
+      res.send({
+        status: "Success",
+        message: "Add Bookmark Successful",
+        data: {
+          addBookmark,
+        },
+      });
+    } else {
+      await tb_bookmark.destroy({
+        where: validation,
+      });
+
+      res.send({
+        status: "Success",
+        message: "Delete Bookmark Successful",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      status: "Failed",
+      message: "Server Error",
+    });
+  }
+};
+
+exports.addBookmark = async (req, res) => {
+  try {
+    let addBookmark = await tb_bookmark.create({
+      idUser: req.tb_user.id,
+      idPost: req.body.idPost,
+    });
+
+    res.send({
+      status: "Success",
+      message: "Add Bookmark Successful",
+      data: {
         addBookmark,
       },
     });
   } catch (error) {
     console.log(error);
-    response.send({
-      status: "server error",
+    res.status(500).send({
+      status: "Failed",
+      message: "Server Error",
     });
   }
 };
 
-exports.deleteBookmark = async (request, response) => {
+exports.deleteBookmark = async (req, res) => {
   try {
-    const id = request.params;
+    const id = req.params;
     await tb_bookmark.destroy({
       where: {
         id,
       },
     });
 
-    response.send({
-      status: "success",
-      message: "delete bookmark success",
+    res.send({
+      status: "Success",
+      message: "Delete Bookmark Successful",
     });
   } catch (error) {
     console.log(error);
+    res.status(500).send({
+      status: "Failed",
+      message: "Server Error",
+    });
   }
 };
 
-exports.getBookmarkuser = async (request, response) => {
+exports.getBookmarkUser = async (req, res) => {
   try {
-    const { id } = request.params;
+    const { idUser } = req.params;
     const data = await tb_bookmark.findAll({
       where: {
-        idUser: id,
+        idUser,
       },
     });
 
-    response.send({
-      status: "success",
-      message: {
-        data,
-      },
+    res.send({
+      status: "Success",
+      message: "Get User Bookmark Successful",
+      data,
     });
   } catch (error) {
     console.log(error);
-    response.send({
-      message: "server error",
+    res.status(500).send({
+      status: "Failed",
+      message: "Server Error",
     });
   }
 };

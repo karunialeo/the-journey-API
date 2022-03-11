@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { auth } = require("../middlewares/auth");
-const { uploadFile } = require("../middlewares/uploadFiles");
+const { uploadFile } = require("../middlewares/uploadFile");
 
 const { register, login, checkAuth } = require("../controller/auth");
 router.post("/register", register);
@@ -10,30 +10,32 @@ router.post("/login", login);
 router.get("/check-auth", auth, checkAuth);
 
 const { getUser } = require("../controller/user");
-router.get("/getUser/:id", getUser);
+router.get("/user/:id", getUser);
 
 const {
   addPost,
   editPost,
   detailPost,
   deletePost,
-  getPostUser,
-  getAllPost,
+  getUserPosts,
+  getAllPosts,
 } = require("../controller/posts");
-router.get("/posts", getAllPost);
-router.post("/addPost", auth, uploadFile("thumbnail"), addPost);
-router.post("/editPost/:id", auth, editPost);
-router.get("/detail/:id", detailPost);
-router.post("/delete/:id", deletePost);
-router.get("/postUser/:id", getPostUser);
+router.get("/post", getAllPosts);
+router.get("/post/user/:id", getUserPosts);
+router.get("/post/detail/:id", detailPost);
+router.post("/post/add", auth, uploadFile("image"), addPost);
+router.patch("/post/edit/:id", auth, editPost);
+router.delete("/post/delete/:id", deletePost);
 
 const {
+  getBookmarkUser,
+  toggleBookmark,
   addBookmark,
   deleteBookmark,
-  getBookmarkuser,
 } = require("../controller/bookmark");
-router.post("/addBookmark", auth, addBookmark);
-router.get("/getBookmark/:id", getBookmarkuser);
-router.post("/deleteBookmark/:id", deleteBookmark);
+router.get("/bookmark/user/:id", getBookmarkUser);
+router.post("/bookmark/toggle", auth, toggleBookmark);
+router.post("/bookmark/add", auth, addBookmark);
+router.delete("/bookmark/delete/:id", deleteBookmark);
 
 module.exports = router;

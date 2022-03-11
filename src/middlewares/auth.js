@@ -5,7 +5,9 @@ exports.auth = (req, res, next) => {
   const token = authHeader && authHeader.split(" ")[1];
   // check if user send token via Authorization header or not
   if (!token) {
-    return res.status(401).send({ message: "Access denied!" }); // rejected request and send response access denied
+    return res
+      .status(401)
+      .send({ status: "Forbidden", message: "Access Denied!" }); // rejected request and send response access denied
   }
 
   try {
@@ -13,7 +15,10 @@ exports.auth = (req, res, next) => {
     req.tb_user = verified;
     next();
   } catch (error) {
+    console.log(error);
     // if token not valid, send response invalid token
-    res.status(400).send({ message: "Invalid token" });
+    return res
+      .status(400)
+      .send({ status: "Forbidden", message: "Invalid Token" });
   }
 };

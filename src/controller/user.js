@@ -1,19 +1,31 @@
 const { tb_user } = require("../../models");
 
-exports.getUser = async (request, response) => {
+exports.getUser = async (req, res) => {
   try {
-    const { id } = request.params;
+    const { id } = req.params;
     const data = await tb_user.findOne({
       where: {
         id,
       },
     });
 
-    response.send({
-      status: "success",
+    if (!data) {
+      return res.status(404).send({
+        status: "Failed",
+        message: "User not Found",
+      });
+    }
+
+    res.send({
+      status: "Success",
+      message: "Get User Successful",
       data,
     });
   } catch (error) {
     console.log(error);
+    res.status(500).send({
+      status: "Failed",
+      message: "Server Error",
+    });
   }
 };

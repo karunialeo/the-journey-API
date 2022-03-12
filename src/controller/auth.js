@@ -10,7 +10,7 @@ exports.register = async (req, res) => {
     fullname: joi.string().min(3).required(),
     email: joi.string().email().min(6).required(),
     password: joi.string().min(4).required(),
-    phone: joi.number().required(),
+    phone: joi.number().min(10).required(),
   });
 
   const { error } = scheme.validate(req.body);
@@ -54,6 +54,7 @@ exports.register = async (req, res) => {
         id: tb_user.id,
         fullname: newUser.fullname,
         email: newUser.email,
+        phone: newUser.phone,
         password: newUser.password,
         image: newUser.image,
       },
@@ -64,6 +65,9 @@ exports.register = async (req, res) => {
       status: "Success",
       message: "Register Successful",
       data: {
+        fullname: req.body.fullname,
+        email: req.body.email,
+        phone: req.body.phone,
         token,
       },
     });

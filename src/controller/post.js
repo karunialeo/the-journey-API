@@ -79,6 +79,47 @@ exports.getUserPosts = async (req, res) => {
   }
 };
 
+exports.getPostDetail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const post = await tb_post.findOne({
+      where: {
+        id,
+      },
+      include: [
+        {
+          model: tb_user,
+          as: "user",
+          attributes: {
+            exclude: ["createdAt", "updatedAt", "password", "email"],
+          },
+        },
+      ],
+    });
+
+    post.image = "http://localhost:5000/uploads/" + post.image;
+
+    if (!post) {
+      res.status(404).send({
+        status: "Failed",
+        message: "Post Not Found",
+      });
+    } else {
+      res.send({
+        status: "Success",
+        message: "Get Detail Post Successful",
+        post,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      status: "Failed",
+      message: "Server Error",
+    });
+  }
+};
+
 exports.addPost = async (req, res) => {
   try {
     let newPost = await tb_post.create({
@@ -120,28 +161,6 @@ exports.editPost = async (req, res) => {
     res.send({
       status: "Success",
       message: "Post Updated",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      status: "Failed",
-      message: "Server Error",
-    });
-  }
-};
-
-exports.detailPost = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const detail = await tb_post.findOne({
-      where: {
-        id,
-      },
-    });
-    res.send({
-      status: "Success",
-      message: "Get Detail Post Successful",
-      detail,
     });
   } catch (error) {
     console.log(error);

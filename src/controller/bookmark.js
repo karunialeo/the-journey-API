@@ -45,18 +45,34 @@ exports.toggleBookmark = async (req, res) => {
 
 exports.addBookmark = async (req, res) => {
   try {
-    let addBookmark = await tb_bookmark.create({
+    const validation = {
       idUser: req.tb_user.id,
       idPost: req.body.idPost,
+    };
+
+    let bookmarkExist = await tb_bookmark.findOne({
+      where: validation,
     });
 
-    res.send({
-      status: "Success",
-      message: "Add Bookmark Successful",
-      data: {
-        addBookmark,
-      },
-    });
+    if (bookmarkExist) {
+      res.status(400).send({
+        status: "Failed",
+        message: "Post Already Bookmarked",
+      });
+    } else {
+      let addBookmark = await tb_bookmark.create({
+        idUser: req.tb_user.id,
+        idPost: req.body.idPost,
+      });
+
+      res.send({
+        status: "Success",
+        message: "Add Bookmark Successful",
+        data: {
+          addBookmark,
+        },
+      });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -68,17 +84,31 @@ exports.addBookmark = async (req, res) => {
 
 exports.deleteBookmark = async (req, res) => {
   try {
-    const id = req.params;
-    await tb_bookmark.destroy({
-      where: {
-        id,
-      },
+    const { idPost } = req.params;
+    const validation = {
+      idUser: req.tb_user.id,
+      idPost,
+    };
+
+    let bookmarkExist = await tb_bookmark.findOne({
+      where: validation,
     });
 
-    res.send({
-      status: "Success",
-      message: "Delete Bookmark Successful",
-    });
+    if (!bookmarkExist) {
+      res.status(400).send({
+        status: "Failed",
+        message: "Bookmarked or Post Does not Exist",
+      });
+    } else {
+      await tb_bookmark.destroy({
+        where: validation,
+      });
+
+      res.send({
+        status: "Success",
+        message: "Delete Bookmark Successful",
+      });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).send({

@@ -160,24 +160,6 @@ exports.getBookmarkPost = async (req, res) => {
       where: {
         idPost,
       },
-      // include: [
-      //   {
-      //     model: tb_post,
-      //     as: "post",
-      //     include: [
-      //       {
-      //         model: tb_user,
-      //         as: "user",
-      //         attributes: {
-      //           exclude: ["createdAt", "updatedAt", "password"],
-      //         },
-      //       },
-      //     ],
-      //     attributes: {
-      //       exclude: ["idUser"],
-      //     },
-      //   },
-      // ],
     });
 
     res.send({

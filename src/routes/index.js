@@ -9,8 +9,9 @@ router.post("/register", register);
 router.post("/login", login);
 router.get("/check-auth", auth, checkAuth);
 
-const { getUser } = require("../controller/user");
-router.get("/user/:id", getUser);
+const { getUser, updateUserImage } = require("../controller/user");
+router.post("/user", getUser);
+router.patch("/user/edit/image/:id", uploadFile("image"), updateUserImage);
 
 const {
   addPost,

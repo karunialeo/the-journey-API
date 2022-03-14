@@ -2,10 +2,10 @@ const { tb_user } = require("../../models");
 
 exports.getUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { email } = req.body;
     const data = await tb_user.findOne({
       where: {
-        id,
+        email,
       },
     });
 
@@ -30,15 +30,31 @@ exports.getUser = async (req, res) => {
   }
 };
 
-exports.editUser = async (req,res) => {
+exports.updateUserImage = async (req, res) => {
   try {
     const { id } = req.params;
-    await tb_user.update(req.body, {
-      where: {
-        idUser: id,
+    const data = await tb_user.update(
+      {
+        image: req.file.filename,
       },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    console.log(req.file);
+
+    res.status(200).send({
+      status: "Success",
+      message: `User with ID: ${id} Updated`,
+      data,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
+    res.status(500).send({
+      status: "Failed",
+      message: "Server Error",
+    });
   }
-}
+};

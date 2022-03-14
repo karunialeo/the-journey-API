@@ -178,6 +178,7 @@ exports.deletePost = async (req, res) => {
     const post = await tb_post.findOne({
       where: {
         id,
+        idUser: req.tb_user.id,
       },
     });
 

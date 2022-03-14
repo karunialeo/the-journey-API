@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
           name: "idUser",
         },
       }),
-        tb_post.hasOne(models.tb_bookmark, {
-          // as: "bookmark" ,
+        tb_post.hasMany(models.tb_bookmark, {
+          as: "bookmark",
           foreignKey: {
             name: "idPost",
           },

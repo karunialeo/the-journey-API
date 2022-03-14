@@ -29,3 +29,16 @@ exports.getUser = async (req, res) => {
     });
   }
 };
+
+exports.editUser = async (req,res) => {
+  try {
+    const { id } = req.params;
+    await tb_user.update(req.body, {
+      where: {
+        idUser: id,
+      },
+    });
+  } catch (error) {
+    console.log(error)
+  }
+}

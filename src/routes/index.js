@@ -28,13 +28,17 @@ router.patch("/post/edit/:id", auth, editPost);
 router.delete("/post/delete/:id", deletePost);
 
 const {
+  checkBookmark,
   getBookmarkUser,
-  toggleBookmark,
+  getBookmarkPost,
+  toggleAddBookmark,
   addBookmark,
   deleteBookmark,
 } = require("../controller/bookmark");
-router.get("/bookmark/user/:id", getBookmarkUser);
-router.post("/bookmark/toggle", auth, toggleBookmark);
+router.get("/bookmark/user/:idUser", getBookmarkUser);
+router.get("/bookmark/post/:idPost", getBookmarkPost);
+router.post("/bookmark/toggle", auth, toggleAddBookmark);
+router.get("/bookmark/check/:idUser/:idPost", checkBookmark);
 router.post("/bookmark/add", auth, addBookmark);
 router.delete("/bookmark/delete/:idPost", auth, deleteBookmark);
 

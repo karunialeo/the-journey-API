@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class tb_bookmark extends Model {
     /**
@@ -14,30 +12,33 @@ module.exports = (sequelize, DataTypes) => {
       tb_bookmark.belongsTo(models.tb_user, {
         as: "user",
         foreignKey: {
-          name: "id"
-        }
+          name: "idUser",
+        },
       }),
-      tb_bookmark.belongsTo(models.tb_post, {
-        // as: "post",
-        foreignKey: {
-          name: "idUser"
-        }
-      })
+        // tb_bookmark.belongsTo(models.tb_post, {
+        //   // as: "post",
+        //   foreignKey: {
+        //     name: "idUser",
+        //   },
+        // });
 
-      tb_bookmark.belongsTo(models.tb_post, {
-        // as: "post",
-        foreignKey: {
-          name: "idPost"
-        }
-      })
+        tb_bookmark.belongsTo(models.tb_post, {
+          as: "post",
+          foreignKey: {
+            name: "idPost",
+          },
+        });
     }
   }
-  tb_bookmark.init({
-    idUser: DataTypes.INTEGER,
-    idPost: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'tb_bookmark',
-  });
+  tb_bookmark.init(
+    {
+      idUser: DataTypes.INTEGER,
+      idPost: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "tb_bookmark",
+    }
+  );
   return tb_bookmark;
 };

@@ -182,6 +182,13 @@ exports.deletePost = async (req, res) => {
       },
     });
 
+    if (!post) {
+      return res.status(403).send({
+        status: "Forbidden",
+        message: "Not Authorized",
+      });
+    }
+
     let imageFile = "uploads/" + post.image;
 
     // Delete image file

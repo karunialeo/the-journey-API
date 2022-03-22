@@ -36,7 +36,7 @@ exports.register = async (req, res) => {
     if (userExist) {
       return res.status(400).send({
         status: "Failed",
-        message: "Email already registered.",
+        message: "Email already registered!",
       });
     }
 
@@ -110,7 +110,7 @@ exports.login = async (req, res) => {
     if (!userExist) {
       return res.status(404).send({
         status: "Failed",
-        message: "User not Found",
+        message: "User not Found! Please Register",
       });
     }
 
@@ -118,7 +118,7 @@ exports.login = async (req, res) => {
     if (!isValid) {
       return res.status(403).send({
         status: "Forbidden",
-        message: "Password Mismatch",
+        message: "Password mismatch!",
       });
     }
 
@@ -133,6 +133,48 @@ exports.login = async (req, res) => {
     };
 
     res.send({
+      status: "Success",
+      message: "Login Successful",
+      data: { user },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      status: "Failed",
+      message: "Server Error",
+    });
+  }
+};
+
+exports.loginGoogle = async (req, res) => {
+  try {
+    const userExist = await tb_user.findOne({
+      where: {
+        email: req.body.email,
+      },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "password"],
+      },
+    });
+
+    if (!userExist) {
+      return res.status(404).send({
+        status: "Failed",
+        message: "User not Found! Please Register",
+      });
+    }
+
+    const token = jwt.sign({ id: userExist.id }, process.env.JWT_KEY);
+    const user = {
+      id: userExist.id,
+      fullname: userExist.fullname,
+      email: userExist.email,
+      phone: userExist.phone,
+      image: uploadServer + userExist.image,
+      token,
+    };
+
+    res.status(200).send({
       status: "Success",
       message: "Login Successful",
       data: { user },
@@ -162,11 +204,11 @@ exports.checkAuth = async (req, res) => {
     if (!dataUser) {
       return res.status(404).send({
         status: "Failed",
-        message: "User not Found",
+        message: "User not Found Please Register",
       });
     }
 
-    res.send({
+    res.status(200).send({
       status: "Success",
       data: {
         user: {

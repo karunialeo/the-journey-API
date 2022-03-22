@@ -4,13 +4,19 @@ const router = express.Router();
 const { auth } = require("../middlewares/auth");
 const { uploadFile } = require("../middlewares/uploadFile");
 
-const { register, login, checkAuth } = require("../controller/auth");
+const {
+  register,
+  login,
+  loginGoogle,
+  checkAuth,
+} = require("../controller/auth");
 router.post("/register", register);
 router.post("/login", login);
+router.post("/google-login", loginGoogle);
 router.get("/check-auth", auth, checkAuth);
 
-const { getUser, updateUserImage } = require("../controller/user");
-router.post("/user", getUser);
+const { checkUser, updateUserImage } = require("../controller/user");
+router.post("/user", checkUser);
 router.patch("/user/edit/image/:id", uploadFile("image"), updateUserImage);
 
 const {
@@ -26,7 +32,7 @@ router.get("/posts/user/:idUser", getUserPosts);
 router.get("/post/detail/:id", getPostDetail);
 router.post("/post/add", auth, uploadFile("image"), addPost);
 router.patch("/post/edit/:id", auth, editPost);
-router.delete("/post/delete/:id", deletePost);
+router.delete("/post/delete/:id", auth, deletePost);
 
 const {
   checkBookmark,

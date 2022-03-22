@@ -1,22 +1,26 @@
 const { tb_user } = require("../../models");
+const fs = require("fs");
 
-exports.getUser = async (req, res) => {
+exports.checkUser = async (req, res) => {
   try {
     const { email } = req.body;
     const data = await tb_user.findOne({
       where: {
         email,
       },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "password"],
+      },
     });
 
     if (!data) {
       return res.status(404).send({
         status: "Failed",
-        message: "User not Found",
+        message: "User not Found! Please Register.",
       });
     }
 
-    res.send({
+    res.status(200).send({
       status: "Success",
       message: "Get User Successful",
       data,
@@ -33,6 +37,21 @@ exports.getUser = async (req, res) => {
 exports.updateUserImage = async (req, res) => {
   try {
     const { id } = req.params;
+    const oldData = await tb_user.findOne({
+      where: {
+        id,
+      },
+    });
+
+    let imageFile = "uploads/" + oldData.image;
+
+    if (oldData.image !== "default-user.png") {
+      fs.unlink(imageFile, (err) => {
+        if (err) console.log(err);
+        else console.log("\nDeleted file: " + imageFile);
+      });
+    }
+
     const data = await tb_user.update(
       {
         image: req.file.filename,
@@ -43,7 +62,6 @@ exports.updateUserImage = async (req, res) => {
         },
       }
     );
-    console.log(req.file);
 
     res.status(200).send({
       status: "Success",

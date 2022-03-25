@@ -12,6 +12,13 @@ app.use("/uploads", express.static("uploads"));
 
 const PORT = process.env.PORT || 5000;
 
+app.get("/", function (req, res) {
+  res.send({
+    message: "Hello World",
+    CLIENT_URL: process.env.CLIENT_URL,
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

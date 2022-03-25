@@ -139,17 +139,6 @@ exports.getBookmarkUser = async (req, res) => {
       ],
     });
 
-    data = JSON.parse(JSON.stringify(data));
-
-    data = data.map((item) => {
-      return {
-        ...item,
-        post: {
-          image: process.env.FILE_PATH + item.image,
-        },
-      };
-    });
-
     res.send({
       status: "Success",
       message: "Get User Bookmark Successful",

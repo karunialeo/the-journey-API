@@ -43,12 +43,9 @@ exports.updateUserImage = async (req, res) => {
       },
     });
 
-    let imageFile = "uploads/" + oldData.image;
-
-    if (oldData.image !== "default-user.png") {
-      fs.unlink(imageFile, (err) => {
-        if (err) console.log(err);
-        else console.log("\nDeleted file: " + imageFile);
+    if (oldData.image !== "default-user_mcbekn.png") {
+      cloudinary.uploader.destroy(oldData.image, function (result) {
+        console.log(result);
       });
     }
 

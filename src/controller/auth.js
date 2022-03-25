@@ -48,7 +48,7 @@ exports.register = async (req, res) => {
       email: req.body.email,
       password: hashedPassword,
       phone: req.body.phone,
-      image: "default-user.png",
+      image: "default-user_mcbekn.png",
     });
 
     const token = jwt.sign(

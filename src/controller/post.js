@@ -1,5 +1,4 @@
 const { tb_post, tb_user } = require("../../models");
-const fs = require("fs");
 
 exports.getAllPosts = async (req, res) => {
   try {
@@ -122,10 +121,16 @@ exports.getPostDetail = async (req, res) => {
 
 exports.addPost = async (req, res) => {
   try {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "the_journey_media",
+      use_filename: true,
+      unique_filename: false,
+    });
+
     let newPost = await tb_post.create({
       title: req.body.title,
       body: req.body.body,
-      image: req.file.filename,
+      image: result.public_id,
       idUser: req.tb_user.id,
     });
 
@@ -189,15 +194,10 @@ exports.deletePost = async (req, res) => {
       });
     }
 
-    let imageFile = "uploads/" + post.image;
-
     // Delete image file
-    if (post.image !== "default-user.png") {
-      fs.unlink(imageFile, (err) => {
-        if (err) console.log(err);
-        else console.log("\nDeleted file: " + imageFile);
-      });
-    }
+    cloudinary.uploader.destroy(post.image, function (result) {
+      console.log(result);
+    });
 
     await tb_post.destroy({
       where: {

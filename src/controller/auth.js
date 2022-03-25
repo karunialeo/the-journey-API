@@ -126,7 +126,7 @@ exports.login = async (req, res) => {
       fullname: userExist.fullname,
       email: userExist.email,
       phone: userExist.phone,
-      image: process.env.FILE_PATH + userExist.image,
+      image: process.env.FILE_PATH + 'the_journey_media/' + userExist.image,
       token,
     };
 
@@ -168,7 +168,7 @@ exports.loginGoogle = async (req, res) => {
       fullname: userExist.fullname,
       email: userExist.email,
       phone: userExist.phone,
-      image: process.env.FILE_PATH + userExist.image,
+      image: process.env.FILE_PATH + 'the_journey_media/' + userExist.image,
       token,
     };
 

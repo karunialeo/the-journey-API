@@ -1,5 +1,6 @@
 const { tb_user } = require("../../models");
 const fs = require("fs");
+const cloudinary = require("../utils/cloudinary");
 
 exports.checkUser = async (req, res) => {
   try {

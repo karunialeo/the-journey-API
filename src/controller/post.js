@@ -1,4 +1,5 @@
 const { tb_post, tb_user } = require("../../models");
+const cloudinary = require("../utils/cloudinary");
 
 exports.getAllPosts = async (req, res) => {
   try {

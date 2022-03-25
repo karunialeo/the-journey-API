@@ -4,8 +4,6 @@ const joi = require("joi");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const uploadServer = "http://localhost:5000/uploads/";
-
 exports.register = async (req, res) => {
   // Joi scheme
   const scheme = joi.object({
@@ -128,7 +126,7 @@ exports.login = async (req, res) => {
       fullname: userExist.fullname,
       email: userExist.email,
       phone: userExist.phone,
-      image: uploadServer + userExist.image,
+      image: process.env.FILE_PATH + userExist.image,
       token,
     };
 
@@ -170,7 +168,7 @@ exports.loginGoogle = async (req, res) => {
       fullname: userExist.fullname,
       email: userExist.email,
       phone: userExist.phone,
-      image: uploadServer + userExist.image,
+      image: process.env.FILE_PATH + userExist.image,
       token,
     };
 

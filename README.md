@@ -2,6 +2,10 @@
 
 You may visit this project by visiting (https://karunialeo-the-journey.netlify.app/).
 
+## Front End Repository
+
+Clone Front End repository from here (https://github.com/karunialeo/the-journey-FE).
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -17,4 +21,4 @@ You may also see any lint errors in the console.
 ### `npm run dev`
 
 Run the app in the development mode concurrently with Front-End Project.
-Clone it from here (https://github.com/karunialeo/the-journey-FE)
+Clone it from here (https://github.com/karunialeo/the-journey-FE).
